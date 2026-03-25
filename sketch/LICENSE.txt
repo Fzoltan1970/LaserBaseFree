@@ -1,0 +1,28 @@
+LaserBaseSketch License
+
+Copyright (c) 2026 Fitos Zoltán
+
+This software is provided for personal and non-commercial use only.
+
+You are allowed to:
+
+download and use the program
+
+share the official download link
+
+You are NOT allowed to:
+
+modify the source code
+
+redistribute modified versions
+
+sell the software
+
+include the software in commercial packages
+
+claim the software as your own work
+
+The source code is visible for transparency and educational purposes only.
+No rights are granted to reuse the code in other projects.
+
+All rights remain with the author.

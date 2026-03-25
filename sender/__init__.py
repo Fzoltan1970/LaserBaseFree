@@ -1,0 +1,2 @@
+"""Standalone Sender application package."""
+

@@ -1,0 +1,34 @@
+# Python cache
+__pycache__/
+*.py[cod]
+
+# Virtual env
+.venv/
+venv/
+env/
+
+# Build
+build/
+dist/
+installer_output/
+
+# Packaged app
+LaserBaseFree/
+
+# IDE
+.vscode/
+.idea/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs / temp
+*.log
+*.tmp
+*.bak
+
+# Python cache tools
+.pytest_cache/
+.coverage
+htmlcov/
