@@ -251,6 +251,7 @@
   "workspace.image.central.mode.jjn": "Jarvis–Judice–Ninke (JJN)",
   "workspace.image.central.mode.stucki": "Stucki",
   "workspace.image.central.chk.negative": "Negativ",
+  "workspace.image.central.chk.one_pixel_off": "1-Pixel-Bereinigung",
   "workspace.image.central.chk.nearest_preview": "Nächste Vorschau",
   "serpentine_scan": "Serpentin-Scan",
   "workspace.image.central.chk.overscan_auto": "Overscan (auto)",

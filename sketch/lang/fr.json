@@ -42,7 +42,7 @@
   "ERROR_LOAD": "Échec du chargement de l’image.",
   "ABOUT_HTML": "<b>LaserBase Sketch</b><br>Générateur de dessin au trait pour la gravure laser<br><br>Créé par :   Zoltán Fitos<br>2026<br><br>Logiciel gratuit — s’il vous a aidé,<br>vous pouvez m’offrir un café ☕",
   "ABOUT_LINK": "Soutenir (PayPal)",
-  "SEND_TO_LASERBASE": "Lézer-képszerkesztő",
+  "SEND_TO_LASERBASE": "Envoyer au traitement d'image",
   "SEND_TO_LASERBASE_EXPORT_FAILED": "Impossible d'exporter l'image pour LaserBase.",
   "SEND_TO_LASERBASE_LAUNCH_FAILED": "Impossible de démarrer LaserBase : {error}",
   "MAGIC_TOOL": "Baguette magique",

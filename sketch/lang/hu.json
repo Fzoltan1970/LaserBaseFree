@@ -42,7 +42,7 @@
   "ERROR_LOAD": "Nem sikerült betölteni a képet.",
   "ABOUT_HTML": "<b>LaserBase Sketch</b><br>Vonalrajz generátor lézergravírozáshoz<br><br>Készítette:   Fitos Zoltán<br>2026<br><br>Ingyenes program — ha segített,<br>meghívhatsz egy kávéra ☕",
   "ABOUT_LINK": "Támogatás (PayPal)",
-  "SEND_TO_LASERBASE": "Lézer-képszerkesztő",
+  "SEND_TO_LASERBASE": "Küldés képfeldolgozásra",
   "SEND_TO_LASERBASE_EXPORT_FAILED": "Nem sikerült exportálni a képet LaserBase küldéshez.",
   "SEND_TO_LASERBASE_LAUNCH_FAILED": "Nem sikerült elindítani a LaserBase-t: {error}",
   "MAGIC_TOOL": "Varázspálca",

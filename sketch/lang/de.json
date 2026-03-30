@@ -42,7 +42,7 @@
   "ERROR_LOAD": "Bild konnte nicht geladen werden.",
   "ABOUT_HTML": "<b>LaserBase Sketch</b><br>Linienzeichnung-Generator für Lasergravur<br><br>Erstellt von:   Zoltán Fitos<br>2026<br><br>Kostenlose Software — wenn sie Ihnen geholfen hat,<br>können Sie mir einen Kaffee spendieren ☕",
   "ABOUT_LINK": "Unterstützen (PayPal)",
-  "SEND_TO_LASERBASE": "Lézer-képszerkesztő",
+  "SEND_TO_LASERBASE": "Zur Bildverarbeitung senden",
   "SEND_TO_LASERBASE_EXPORT_FAILED": "Bild konnte nicht für LaserBase exportiert werden.",
   "SEND_TO_LASERBASE_LAUNCH_FAILED": "LaserBase konnte nicht gestartet werden: {error}",
   "MAGIC_TOOL": "Zauberstab",

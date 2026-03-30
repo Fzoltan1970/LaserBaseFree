@@ -254,6 +254,7 @@
   "workspace.image.central.mode.bayer": "Bayer",
   "workspace.image.central.mode.halftone_clustered": "Halftone clustered",
   "workspace.image.central.chk.negative": "Negative",
+  "workspace.image.central.chk.one_pixel_off": "1 pixel cleanup",
   "workspace.image.central.chk.nearest_preview": "Nearest preview",
   "serpentine_scan": "Serpentine scan",
   "workspace.image.central.chk.overscan_auto": "Overscan (auto)",

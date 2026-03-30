@@ -42,7 +42,7 @@
   "ERROR_LOAD": "Impossibile caricare l'immagine.",
   "ABOUT_HTML": "<b>LaserBase Sketch</b><br>Generatore di line art per incisione laser<br><br>Creato da:   Zoltán Fitos<br>2026<br><br>Software gratuito — se ti è stato utile,<br>puoi offrirmi un caffè ☕",
   "ABOUT_LINK": "Supporto (PayPal)",
-  "SEND_TO_LASERBASE": "Lézer-képszerkesztő",
+  "SEND_TO_LASERBASE": "Invia per l'elaborazione",
   "SEND_TO_LASERBASE_EXPORT_FAILED": "Impossibile esportare l'immagine per LaserBase.",
   "SEND_TO_LASERBASE_LAUNCH_FAILED": "Impossibile avviare LaserBase: {error}",
   "MAGIC_TOOL": "Bacchetta magica",

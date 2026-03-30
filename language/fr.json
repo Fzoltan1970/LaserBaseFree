@@ -253,6 +253,7 @@
   "workspace.image.central.mode.bayer": "Bayer",
   "workspace.image.central.mode.halftone_clustered": "Demi-teinte groupée",
   "workspace.image.central.chk.negative": "Négatif",
+  "workspace.image.central.chk.one_pixel_off": "Nettoyage 1 pixel",
   "workspace.image.central.chk.nearest_preview": "Aperçu nearest",
   "serpentine_scan": "Balayage serpentin",
   "workspace.image.central.chk.overscan_auto": "Overscan (auto)",

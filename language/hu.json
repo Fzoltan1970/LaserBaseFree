@@ -254,6 +254,7 @@
   "workspace.image.central.mode.bayer": "Bayer",
   "workspace.image.central.mode.halftone_clustered": "Klaszteres félárnyalat",
   "workspace.image.central.chk.negative": "Negatív",
+  "workspace.image.central.chk.one_pixel_off": "1 pixeles zajszűrés",
   "workspace.image.central.chk.nearest_preview": "Legközelebbi előnézet",
   "serpentine_scan": "Szerpentin szkennelés",
   "workspace.image.central.chk.overscan_auto": "Overscan (auto)",

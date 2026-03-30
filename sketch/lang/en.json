@@ -42,7 +42,7 @@
   "ERROR_LOAD": "Failed to load image.",
   "ABOUT_HTML": "<b>LaserBase Sketch</b><br>Line art generator for laser engraving<br><br>Created by:   Zoltán Fitos<br>2026<br><br>Free software — if it helped you,<br>you can buy me a coffee ☕",
   "ABOUT_LINK": "Support (PayPal)",
-  "SEND_TO_LASERBASE": "Lézer-képszerkesztő",
+  "SEND_TO_LASERBASE": "Send for processing",
   "SEND_TO_LASERBASE_EXPORT_FAILED": "Could not export image for LaserBase.",
   "SEND_TO_LASERBASE_LAUNCH_FAILED": "Could not launch LaserBase: {error}",
   "MAGIC_TOOL": "Magic Tool",
