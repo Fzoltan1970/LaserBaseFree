@@ -294,6 +294,15 @@ surface layer.
 
 ------------------------------------------------------------------------
 
+### 5.3 1 pixel cleanup
+
+A local post-processing step for binary dithered images.
+
+It handles isolated single-pixel noise based on a local rule. In
+negative mode the same rule is applied with inverted polarity.
+
+------------------------------------------------------------------------
+
 ## 6. Processing pipeline order
 
 The program applies transformations in the following order:
@@ -305,7 +314,8 @@ The program applies transformations in the following order:
     5. Unsharp mask
     6. Negative
     7. Dithering
-    8. Machine grid alignment
+    8. 1 pixel cleanup
+    9. Machine grid alignment
 
 ------------------------------------------------------------------------
 

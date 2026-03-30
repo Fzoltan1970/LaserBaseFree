@@ -231,6 +231,16 @@ Inversion des tons :
 
 ------------------------------------------------------------------------
 
+### 5.3 Traitement 1 pixel
+
+Étape locale de post-traitement sur une image dither binaire.
+
+Elle traite les points de bruit isolés d'un seul pixel selon une règle
+locale. En mode négatif, la même règle s'applique avec une polarité
+inversée.
+
+------------------------------------------------------------------------
+
 ## 6. Ordre du pipeline de traitement
 
     1. Resample
@@ -240,7 +250,8 @@ Inversion des tons :
     5. Unsharp mask
     6. Negative
     7. Dithering
-    8. Alignement de la grille machine
+    8. Nettoyage 1 pixel
+    9. Alignement de la grille machine
 
 ------------------------------------------------------------------------
 

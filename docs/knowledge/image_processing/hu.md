@@ -279,6 +279,13 @@ kép fekete lenne, ott lesz a fém ezüst. A negatív módban a program a
 sötét és a világos területeket felcseréli, és a gravírozás eredménye az
 eredeti kép pozitív képét adja vissza a felszínen.
 
+### 5.3 1 pixel kezelés
+
+Lokális utófeldolgozási lépés bináris ditherelt képen.
+
+Az elszigetelt egy pixeles zajpontokat kezeli lokális szabály alapján.
+Negatív módban ugyanez a szabály fordított polaritással érvényesül.
+
 ------------------------------------------------------------------------
 
 ## 6. A feldolgozási pipeline sorrendje
@@ -292,7 +299,8 @@ A program a következő sorrendben alkalmazza a transzformációkat:
     5. Unsharp mask (Radius + Amount)
     6. Negative (ha aktív)
     7. Dithering algoritmus
-    8. Machine grid igazítás
+    8. 1 pixel zajszűrés
+    9. Machine grid igazítás
 
 Ez a sorrend nem véletlenszerű. A gamma és a kontraszt a dithering
 bemeneti tónusát befolyásolja -- ha ezek a dithering után futnának, a

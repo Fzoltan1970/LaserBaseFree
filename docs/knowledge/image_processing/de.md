@@ -256,6 +256,15 @@ Tonwert-Inversion:
 
 ------------------------------------------------------------------------
 
+### 5.3 1-Pixel-Verarbeitung
+
+Ein lokaler Nachbearbeitungsschritt für binäre Dither-Bilder.
+
+Behandelt isolierte Einzelpixel-Störungen anhand einer lokalen Regel. Im
+Negativmodus gilt dieselbe Regel mit umgekehrter Polarität.
+
+------------------------------------------------------------------------
+
 ## 6. Reihenfolge der Verarbeitung
 
     1. Resample
@@ -265,7 +274,8 @@ Tonwert-Inversion:
     5. Unsharp Mask
     6. Negative
     7. Dithering
-    8. Machine grid alignment
+    8. 1-Pixel-Bereinigung
+    9. Machine grid alignment
 
 ------------------------------------------------------------------------
 
