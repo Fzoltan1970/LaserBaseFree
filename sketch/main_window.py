@@ -951,17 +951,13 @@ class MainWindow(QMainWindow):
     def apply_magic_tool(self):
         if self.sketch_image is None or self.magic_mask is None:
             return
-        current_input = getattr(self.processor, "_current_image", None)
-        current_input_id = id(current_input) if current_input is not None else None
-        input_changed = self._last_processing_input_id != current_input_id
         self._push_history()
         if self.magic_applied_mask is None:
             self.magic_applied_mask = self.magic_mask.copy()
         else:
             self.magic_applied_mask = np.maximum(self.magic_applied_mask, self.magic_mask)
         self.sketch_image[self.magic_mask > 0] = 255
-        if input_changed:
-            self.edit.set_base_image(self.sketch_image)
+        self.edit.set_base_image(self.sketch_image)
         self.cancel_magic_tool()
 
     def _apply_magic_mask(self, img):

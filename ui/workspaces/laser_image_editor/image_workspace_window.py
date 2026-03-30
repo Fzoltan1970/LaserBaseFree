@@ -3,6 +3,7 @@ from __future__ import annotations
 import math
 import subprocess
 import sys
+import tempfile
 from pathlib import Path
 
 from PyQt6.QtWidgets import (
@@ -225,6 +226,25 @@ class LabeledSlider(QWidget):
 
     def value(self) -> int:
         return self.slider.value()
+
+
+class FullscreenControlsHost(QWidget):
+    def __init__(self, parent=None):
+        super().__init__(parent)
+        self._overlay_background_enabled = False
+
+    def set_overlay_background_enabled(self, enabled: bool) -> None:
+        enabled = bool(enabled)
+        if self._overlay_background_enabled == enabled:
+            return
+        self._overlay_background_enabled = enabled
+        self.update()
+
+    def paintEvent(self, event):
+        if self._overlay_background_enabled:
+            painter = QPainter(self)
+            painter.fillRect(self.rect(), QColor(240, 240, 240, 128))
+        super().paintEvent(event)
 
 
 # 🔍 Zoomolható QLabel
@@ -815,6 +835,8 @@ QLineEdit, QPushButton {
         self._fs_controls_old_parent = None
         self._fs_controls_old_layout = None
         self._fs_controls_old_index = None
+        self._fs_checkbox_styles: list[tuple[QCheckBox, str]] = []
+        self._fs_checkbox_indicator_path: str | None = None
         self._fs_drag_active = False
         self._fs_drag_offset = None
         self._gcode_export_thread = None
@@ -1417,7 +1439,7 @@ QLineEdit, QPushButton {
         CONTROL_ROW_H = 24
         CONTROL_GAP = 4
 
-        controls_host = QWidget(self)
+        controls_host = FullscreenControlsHost(self)
         controls_layout = QVBoxLayout(controls_host)
         controls_layout.setContentsMargins(0, 0, 0, 0)
         controls_layout.setSpacing(CONTROL_GAP)
@@ -1467,6 +1489,9 @@ QLineEdit, QPushButton {
 
         self.negative_checkbox = QCheckBox(
             self.tr("workspace.image.central.chk.negative", "Negatív")
+        )
+        self.one_pixel_off_checkbox = QCheckBox(
+            self.tr("workspace.image.central.chk.one_pixel_off", "1 pixel off")
         )
         self.nearest_preview_checkbox = QCheckBox(
             self.tr("workspace.image.central.chk.nearest_preview", "Nearest preview")
@@ -1536,6 +1561,7 @@ QLineEdit, QPushButton {
             self.radius_ctrl,
             self.amount_ctrl,
             self.negative_checkbox,
+            self.one_pixel_off_checkbox,
         ):
             w.setFixedHeight(CONTROL_ROW_H)
             w.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Fixed)
@@ -1666,6 +1692,7 @@ QLineEdit, QPushButton {
         self.gamma_input.textChanged.connect(self._on_base_control_changed)
         self.radius_input.textChanged.connect(self._on_base_control_changed)
         self.amount_input.textChanged.connect(self._on_base_control_changed)
+        self.one_pixel_off_checkbox.stateChanged.connect(self._on_base_control_changed)
         self.negative_checkbox.stateChanged.connect(self._on_base_control_changed)
         self.mirror_x_checkbox.stateChanged.connect(self._on_base_control_changed)
         self.mirror_y_checkbox.stateChanged.connect(self._on_base_control_changed)
@@ -1815,6 +1842,7 @@ QLineEdit, QPushButton {
         control = {
             "mode": mode_value,
             "serpentine_scan": bool(self.serpentine_scan),
+            "one_pixel_off": self.one_pixel_off_checkbox.isChecked(),
             "negative": self.negative_checkbox.isChecked(),
             "mirror_x": self.mirror_x_checkbox.isChecked(),
             "mirror_y": self.mirror_y_checkbox.isChecked(),
@@ -3468,6 +3496,16 @@ QLineEdit, QPushButton {
         if self._fs_controls_old_layout is not None:
             self._fs_controls_old_layout.removeWidget(controls)
         controls.setParent(dialog)
+        controls.set_overlay_background_enabled(True)
+        checkbox_style = self._fullscreen_checkbox_indicator_stylesheet()
+        self._fs_checkbox_styles = []
+        for checkbox in controls.findChildren(QCheckBox):
+            original_style = checkbox.styleSheet()
+            self._fs_checkbox_styles.append((checkbox, original_style))
+            if original_style.strip():
+                checkbox.setStyleSheet(f"{original_style.rstrip()}\n{checkbox_style}")
+            else:
+                checkbox.setStyleSheet(checkbox_style)
         controls.installEventFilter(self)
         controls.raise_()
         controls.show()
@@ -3508,6 +3546,10 @@ QLineEdit, QPushButton {
                         self._fs_controls_old_layout.insertWidget(insert_index, controls)
                     elif hasattr(self._fs_controls_old_layout, "addWidget"):
                         self._fs_controls_old_layout.addWidget(controls)
+            for checkbox, original_style in self._fs_checkbox_styles:
+                checkbox.setStyleSheet(original_style)
+            self._fs_checkbox_styles = []
+            controls.set_overlay_background_enabled(False)
             controls.show()
             self._fs_controls_old_parent = None
             self._fs_controls_old_layout = None
@@ -3559,6 +3601,45 @@ QLineEdit, QPushButton {
         self._fs_dialog = dialog
         self._fs_view = fs_view
         self._fs_dialog.showFullScreen()
+
+    def _fullscreen_checkbox_indicator_stylesheet(self) -> str:
+        indicator_path = self._ensure_fullscreen_checkbox_indicator_asset()
+        return f"""
+QCheckBox::indicator {{
+    width: 14px;
+    height: 14px;
+}}
+QCheckBox::indicator:unchecked {{
+    border: 1px solid #000000;
+    background-color: rgba(255, 255, 255, 230);
+}}
+QCheckBox::indicator:checked {{
+    border: 1px solid #000000;
+    background-color: rgba(255, 255, 255, 230);
+    image: url("{indicator_path}");
+}}
+"""
+
+    def _ensure_fullscreen_checkbox_indicator_asset(self) -> str:
+        if self._fs_checkbox_indicator_path:
+            return self._fs_checkbox_indicator_path
+        indicator_path = Path(tempfile.gettempdir()) / "laserbase_checkbox_check_black_14.png"
+        if not indicator_path.exists():
+            image = QImage(14, 14, QImage.Format.Format_ARGB32)
+            image.fill(Qt.GlobalColor.transparent)
+            painter = QPainter(image)
+            painter.setRenderHint(QPainter.RenderHint.Antialiasing, True)
+            pen = QPen(QColor(0, 0, 0))
+            pen.setWidth(2)
+            pen.setCapStyle(Qt.PenCapStyle.RoundCap)
+            pen.setJoinStyle(Qt.PenJoinStyle.RoundJoin)
+            painter.setPen(pen)
+            painter.drawLine(3, 7, 6, 10)
+            painter.drawLine(6, 10, 11, 4)
+            painter.end()
+            image.save(str(indicator_path))
+        self._fs_checkbox_indicator_path = indicator_path.as_posix()
+        return self._fs_checkbox_indicator_path
 
     def eventFilter(self, watched, event):
         if watched is self._controls_host and self._fs_dialog is not None:
