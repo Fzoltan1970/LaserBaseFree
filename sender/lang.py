@@ -7,7 +7,7 @@ from core.infrastructure.appdirs import appdata_dir, ensure_dir, install_dir
 
 
 def app_dir() -> Path:
-    return ensure_dir(appdata_dir("SenderFree"))
+    return ensure_dir(appdata_dir("Sender"))
 
 
 def bundle_dir() -> Path:

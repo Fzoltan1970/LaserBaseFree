@@ -198,8 +198,8 @@ class SenderWorkerServer:
     _GRBL_SETTING_RE = re.compile(r"^\s*\$(\d+)\s*=\s*(.+?)\s*$")
     _STATUS_POLL_TIMEOUT_S = 0.15
     _STATUS_POLL_MAX_LINES = 8
-    _MPOS_RE = re.compile(
-        r"MPos:([-+]?\d*\.?\d+),([-+]?\d*\.?\d+),([-+]?\d*\.?\d+)",
+    _POSITION_RE = re.compile(
+        r"(?:MPos|WPos):([-+]?\d*\.?\d+),([-+]?\d*\.?\d+),([-+]?\d*\.?\d+)",
         re.IGNORECASE,
     )
 
@@ -573,7 +573,7 @@ class SenderWorkerServer:
                 continue
 
             lines_seen += 1
-            position = self._parse_mpos_status(response)
+            position = self._parse_position_status(response)
             if position is not None:
                 x, y, z = position
                 self._send_event({"type": "raw_position", "x": x, "y": y, "z": z})
@@ -637,8 +637,8 @@ class SenderWorkerServer:
             }
         )
 
-    def _parse_mpos_status(self, response: str) -> Optional[tuple[float, float, float]]:
-        match = self._MPOS_RE.search(response)
+    def _parse_position_status(self, response: str) -> Optional[tuple[float, float, float]]:
+        match = self._POSITION_RE.search(response)
         if not match:
             return None
         try:

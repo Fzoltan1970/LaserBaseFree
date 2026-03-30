@@ -91,7 +91,7 @@ class SenderClient(QObject):
 
             if getattr(sys, "frozen", False):
                 worker_executable = (
-                    Path(sys.executable).resolve().parent.parent / "SenderWorkerFree" / "SenderWorkerFree.exe"
+                    Path(sys.executable).resolve().parent.parent / "SenderWorker" / "SenderWorker.exe"
                 )
                 cmd = [
                     str(worker_executable),
