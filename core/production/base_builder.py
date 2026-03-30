@@ -14,6 +14,7 @@ from core.production.dithering import (
     DITHER_MODES,
     ORDERED_DITHER_MODES,
     apply_dither_mode,
+    is_binary_dither_mode,
 )
 from core.production.raw_crop import apply_raw_crop
 
@@ -46,6 +47,73 @@ def _normalize_unit_control(value) -> tuple[float | None, bool]:
     return _clamp(parsed, -1.0, 1.0), False
 
 
+def _fill_isolated_white_holes(
+    img_l: Image.Image, negative: bool = False
+) -> Image.Image:
+    if img_l.mode != "L":
+        img_l = img_l.convert("L")
+
+    arr = np.asarray(img_l, dtype=np.uint8)
+    black = arr < 128
+    working_black = black if not negative else (~black)
+    target_pixels = (~black) if not negative else black
+    if not np.any(working_black):
+        return img_l
+
+    padded = np.pad(working_black.astype(np.uint8), 1, mode="constant", constant_values=0)
+    neighbors = (
+        padded[:-2, :-2] + padded[:-2, 1:-1] + padded[:-2, 2:]
+        + padded[1:-1, :-2] + padded[1:-1, 2:]
+        + padded[2:, :-2] + padded[2:, 1:-1] + padded[2:, 2:]
+    )
+    local_padded = np.pad(
+        working_black.astype(np.uint8), 2, mode="constant", constant_values=0
+    )
+    local_black = (
+        local_padded[:-4, :-4] + local_padded[:-4, 1:-3] + local_padded[:-4, 2:-2]
+        + local_padded[:-4, 3:-1] + local_padded[:-4, 4:]
+        + local_padded[1:-3, :-4] + local_padded[1:-3, 1:-3] + local_padded[1:-3, 2:-2]
+        + local_padded[1:-3, 3:-1] + local_padded[1:-3, 4:]
+        + local_padded[2:-2, :-4] + local_padded[2:-2, 1:-3] + local_padded[2:-2, 2:-2]
+        + local_padded[2:-2, 3:-1] + local_padded[2:-2, 4:]
+        + local_padded[3:-1, :-4] + local_padded[3:-1, 1:-3] + local_padded[3:-1, 2:-2]
+        + local_padded[3:-1, 3:-1] + local_padded[3:-1, 4:]
+        + local_padded[4:, :-4] + local_padded[4:, 1:-3] + local_padded[4:, 2:-2]
+        + local_padded[4:, 3:-1] + local_padded[4:, 4:]
+    )
+    local_black_ratio = local_black.astype(np.float32) / 25.0
+    top_band = (
+        local_padded[:-4, :-4] + local_padded[:-4, 1:-3] + local_padded[:-4, 2:-2]
+        + local_padded[:-4, 3:-1] + local_padded[:-4, 4:]
+    )
+    bottom_band = (
+        local_padded[4:, :-4] + local_padded[4:, 1:-3] + local_padded[4:, 2:-2]
+        + local_padded[4:, 3:-1] + local_padded[4:, 4:]
+    )
+    left_band = (
+        local_padded[:-4, :-4] + local_padded[1:-3, :-4] + local_padded[2:-2, :-4]
+        + local_padded[3:-1, :-4] + local_padded[4:, :-4]
+    )
+    right_band = (
+        local_padded[:-4, 4:] + local_padded[1:-3, 4:] + local_padded[2:-2, 4:]
+        + local_padded[3:-1, 4:] + local_padded[4:, 4:]
+    )
+    isolated = (
+        target_pixels
+        & (neighbors == 8)
+        & (local_black_ratio >= 0.92)
+        & (top_band >= 4)
+        & (bottom_band >= 4)
+        & (left_band >= 4)
+        & (right_band >= 4)
+    )
+    if not np.any(isolated):
+        return img_l
+    cleaned = arr.copy()
+    cleaned[isolated] = 255 if negative else 0
+    return Image.fromarray(cleaned, mode="L")
+
+
 def apply_base_tuning(
     img_l: Image.Image,
     base_tuning: dict | None,
@@ -72,6 +140,16 @@ def apply_base_tuning(
     tuning_info["requested"] = dict(base_tuning)
 
     result = img_l
+
+    negative_enabled = bool(base_tuning.get("negative", False))
+    if negative_enabled:
+        work = np.asarray(result)
+        if np.issubdtype(work.dtype, np.floating):
+            work = 255.0 - work
+        else:
+            work = 255 - work
+        result = Image.fromarray(np.clip(work, 0, 255).astype(np.uint8), mode="L")
+        tuning_info["applied"] = True
 
     contrast_norm, contrast_invalid = _normalize_unit_control(
         base_tuning.get("contrast")
@@ -146,16 +224,6 @@ def apply_base_tuning(
         tuning_info["applied"] = True
     if mirror_y:
         result = result.transpose(Image.Transpose.FLIP_TOP_BOTTOM)
-        tuning_info["applied"] = True
-
-    negative_enabled = bool(base_tuning.get("negative", False))
-    if negative_enabled:
-        work = np.asarray(result)
-        if np.issubdtype(work.dtype, np.floating):
-            work = 255.0 - work
-        else:
-            work = 255 - work
-        result = Image.fromarray(np.clip(work, 0, 255).astype(np.uint8), mode="L")
         tuning_info["applied"] = True
 
     requested_mode = base_tuning.get("mode")
@@ -320,6 +388,15 @@ def build_base_image(
         base_image = apply_dither_mode(base_image, dither_mode, base_tuning=base_tuning)
         tuning_dither_ms = (perf_counter() - dither_start) * 1000.0
         tuning_info.applied = True
+
+    if (
+        isinstance(base_tuning, dict)
+        and bool(base_tuning.get("one_pixel_off", False))
+        and is_binary_dither_mode(dither_mode)
+    ):
+        base_image = _fill_isolated_white_holes(
+            base_image, negative=bool(base_tuning.get("negative", False))
+        )
 
     tuning_info.geometry_resample_ms = geometry_resample_ms
     tuning_info.tuning_dither_ms = tuning_dither_ms
