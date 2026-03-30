@@ -1,6 +1,7 @@
 # Python cache
 __pycache__/
 *.py[cod]
+*.pyo
 
 # Virtual env
 .venv/
@@ -30,5 +31,21 @@ Thumbs.db
 
 # Python cache tools
 .pytest_cache/
-.coverage
+.coverage*
 htmlcov/
+
+# Environment
+.env
+
+# Build / installer
+LaserBaseFree.iss
+build_all.bat
+
+# Temp / local folders
+New/
+
+# Windows shortcuts
+*.lnk
+
+# Trashed / temp assets
+assets/.trashed-*
